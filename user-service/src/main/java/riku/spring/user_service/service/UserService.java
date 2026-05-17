@@ -29,6 +29,10 @@ public class UserService {
         return new ResponseEntity<>(toResponse(repo.save(toUser(req))), HttpStatus.CREATED);
     }
 
+    public boolean userValidationById(Long id){
+        return repo.findById(id).orElse(null) != null;
+    }
+
     public ResponseEntity<?> getUsers(){
         List<User> users = repo.findAll();
         if(users.isEmpty()){
