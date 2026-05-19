@@ -6,6 +6,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class UserServiceApplicationTests {
 
+	@Autowired
+	private UserRepo repo;
+	private final int TOTAL_USERS = 20;
+
 	@Test
 	void contextLoads() {
 	}
