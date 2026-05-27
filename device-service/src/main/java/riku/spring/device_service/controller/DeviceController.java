@@ -18,6 +18,11 @@ public class DeviceController {
         return service.getDeviceById(id);
     }
 
+    @GetMapping("/validate/{id}")
+    public ResponseEntity<Boolean> validateDeviceById(@PathVariable Long id){
+        return ResponseEntity.ok(service.validateDeviceById(id));
+    }
+
     @PostMapping("/create")
     public ResponseEntity<?> createDevice(@RequestBody DeviceRequest request){
         return service.create(request);

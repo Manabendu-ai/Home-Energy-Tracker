@@ -28,6 +28,10 @@ public class DeviceService {
         return new ResponseEntity<>(toResponse(device), HttpStatus.OK);
     }
 
+    public boolean validateDeviceById(long id){
+        return repo.findById(id).orElse(null) != null;
+    }
+
     public Device toDevice(DeviceRequest req){
         return Device.builder()
                 .name(req.getName())
