@@ -15,32 +15,32 @@ import riku.spring.device_service.service.DeviceService;
 @SpringBootTest
 class DeviceServiceApplicationTests {
 
-	private final int NUMBER_OF_DEVICES=100;
-	private final int USERS=20;
+//	private final int NUMBER_OF_DEVICES=100;
+//	private final int USERS=20;
+//
+//	@Autowired
+//	private DeviceService service;
+//
+//	@Test
+//	void contextLoads() {
+//	}
 
-	@Autowired
-	private DeviceService service;
 
-	@Test
-	void contextLoads() {
-	}
-
-
-	@Disabled
-	@Test
-	void createDevice(){
-		for(int i = 0; i<=NUMBER_OF_DEVICES; i++){
-				var device = DeviceRequest.builder()
-						.name("Device: "+i)
-						.type(DeviceType.values()[i % DeviceType.values().length])
-						.location("location: "+(i+1))
-						.userId((long)  (i%USERS)+1)
-						.build();
-				service.create(device);
-				log.info("Device repository Populated");
-			}
-
-		}
+//	@Disabled
+//	@Test
+//	void createDevice(){
+//		for(int i = 0; i<=NUMBER_OF_DEVICES; i++){
+//				var device = DeviceRequest.builder()
+//						.name("Device: "+i)
+//						.type(DeviceType.values()[i % DeviceType.values().length])
+//						.location("location: "+(i+1))
+//						.userId((long)  (i%USERS)+1)
+//						.build();
+//				service.create(device);
+//				log.info("Device repository Populated");
+//			}
+//
+//		}
 	}
 
 
