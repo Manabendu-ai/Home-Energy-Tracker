@@ -15,10 +15,10 @@ public class InsightController {
 
     private final InsightService service;
 
-    @GetMapping("/saving-tips/{userId}")
-    public ResponseEntity<?> getSavingTips(@PathVariable Long userId){
-        return service.getSavingTips(userId);
-    }
+//    @GetMapping("/saving-tips/{userId}")
+//    public ResponseEntity<?> getSavingTips(@PathVariable Long userId){
+//        return service.getSavingTips(userId);
+//    }
 
     @GetMapping("/overview/{userId}")
     public ResponseEntity<?> getOverview(@PathVariable Long userId){
