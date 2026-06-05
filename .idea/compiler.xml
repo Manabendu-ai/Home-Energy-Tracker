@@ -33,6 +33,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="Home-Energy-Tracker" target="21" />
+      <module name="Insight-Service" target="21" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

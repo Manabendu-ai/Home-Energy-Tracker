@@ -10,6 +10,8 @@ import riku.spring.device_service.dto.DeviceResponse;
 import riku.spring.device_service.model.Device;
 import riku.spring.device_service.repo.DeviceRepo;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class DeviceService {
@@ -83,5 +85,18 @@ public class DeviceService {
         }
         repo.delete(device);
         return  new ResponseEntity<>(toResponse(device), HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> getAllDevicesByUserId(Long userId) {
+        if(validationService.isValidUser(userId)){
+            List<Device> devices = repo.findAllByUserId(userId);
+            return new ResponseEntity<>(
+                    devices.stream()
+                            .map(this::toResponse)
+                            .toList(),
+                    HttpStatus.OK
+            );
+        }
+        return new ResponseEntity<>("User with id: "+userId+" Not Found!", HttpStatus.NOT_FOUND);
     }
 }

@@ -9,6 +9,8 @@ import com.influxdb.query.FluxTable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,14 +18,12 @@ import org.springframework.stereotype.Service;
 import riku.spring.kafka.event.AlertingEvent;
 import riku.spring.kafka.event.EnergyUsageEvent;
 import riku.spring.usage_service.dto.DeviceResponse;
+import riku.spring.usage_service.dto.UsageDTO;
 import riku.spring.usage_service.dto.UserResponse;
 import riku.spring.usage_service.model.DeviceEnergyUsage;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -145,5 +145,104 @@ public class UsageService {
             }
 
         }
+    }
+
+    public ResponseEntity<?> getXDaysUsageForUser(Long userId, int days) {
+       log.info("Getting usage for user ID {} over the past {} days",userId, days);
+       final List<DeviceResponse> devices = deviceService.getAllDevicesByUserId(userId);
+
+       if(devices == null || devices.isEmpty()){
+           return new ResponseEntity<>(
+                   UsageDTO.builder()
+                           .userId(userId)
+                           .devices(devices)
+                           .build(),
+                   HttpStatus.OK
+           );
+       }
+
+       List<String> deviceIdStrings = devices.stream()
+               .map(DeviceResponse::getId)
+               .filter(Objects::nonNull)
+               .map(String::valueOf)
+               .toList();
+
+       final Instant now = Instant.now();
+       final Instant start = now.minusSeconds((long) days * 24 * 3600);
+        final String deviceFilter = deviceIdStrings.stream()
+                .map(idStr -> String.format("r[\"deviceId\"] == \"%s\"", idStr))
+                .collect(Collectors.joining(" or "));
+
+        String fluxQuery = String.format("""
+            from(bucket: "%s")
+              |> range(start: time(v: "%s"), stop: time(v: "%s"))
+              |> filter(fn: (r) => r["_measurement"] == "energy_usage")
+              |> filter(fn: (r) => r["_field"] == "energyConsumed")
+              |> filter(fn: (r) => %s)
+              |> group(columns: ["deviceId"])
+              |> sum(column: "_value")
+            """, influxBucket, start.toString(), now.toString(), deviceFilter);
+
+        final Map<Long, Double> aggregateMap = new HashMap<>();
+
+        try {
+            QueryApi queryApi = influxDBClient.getQueryApi();
+            List<FluxTable> tables = queryApi.query(fluxQuery, influxOrg);
+
+            for (FluxTable table : tables) {
+                for (FluxRecord record : table.getRecords()) {
+                    Object deviceIdObj = record.getValueByKey("deviceId");
+                    String deviceIdStr = deviceIdObj == null ? null : deviceIdObj.toString();
+                    if (deviceIdStr == null) continue;
+
+                    Double energyConsumed = record.getValueByKey("_value") instanceof Number
+                            ? ((Number) record.getValueByKey("_value")).doubleValue()
+                            : 0.0;
+
+                    try {
+                        Long deviceId = Long.valueOf(deviceIdStr);
+                        aggregateMap.put(deviceId, aggregateMap.getOrDefault(deviceId, 0.0) + energyConsumed);
+                    } catch (NumberFormatException nfe) {
+                        log.warn("Failed to parse deviceId from flux record: {}", deviceIdStr);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("Failed to query InfluxDB for user {} usage over {} days: {}", userId, days, e.getMessage());
+            devices.forEach(d -> d.setEnergyConsumed(0.0));
+            return new ResponseEntity<>(
+                    UsageDTO.builder()
+                            .userId(userId)
+                            .devices(null)
+                            .build(),
+                    HttpStatus.OK
+            );
+        }
+
+        for (DeviceResponse device : devices) {
+            if (device == null || device.getId() == null) continue;
+            device.setEnergyConsumed(aggregateMap.getOrDefault(device.getId(), 0.0));
+        }
+
+        log.info("Aggregated energy consumption for userId {}: {}", userId, aggregateMap);
+
+        final List<DeviceResponse> resultDevices = devices.stream()
+                .map(d -> DeviceResponse.builder()
+                        .id(d.getId())
+                        .name(d.getName())
+                        .type(d.getType())
+                        .location(d.getLocation())
+                        .userId(d.getUserId())
+                        .energyConsumed(d.getEnergyConsumed())
+                        .build())
+                .toList();
+
+        return new ResponseEntity<>(
+                UsageDTO.builder()
+                        .userId(userId)
+                        .devices(resultDevices)
+                        .build(),
+                HttpStatus.OK
+        );
     }
 }
