@@ -5,6 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import riku.spring.usage_service.dto.DeviceResponse;
 
+import java.util.Collections;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class DeviceService {
@@ -20,6 +23,20 @@ public class DeviceService {
                     .block();
         } catch (Exception e){
             return null;
+        }
+    }
+
+    public List<DeviceResponse> getAllDevicesByUserId(Long userId){
+        try {
+            return webClient.get()
+                    .uri("http://localhost:8082/api/device/getAll/"+userId )
+                    .retrieve()
+                    .bodyToFlux(DeviceResponse.class)
+                    .collectList()
+                    .block();
+        } catch (Exception e){
+            e.printStackTrace();
+            return Collections.emptyList();
         }
     }
 }
