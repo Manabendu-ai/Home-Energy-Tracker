@@ -16,22 +16,16 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
         </processorPath>
-        <module name="device-service" />
-        <module name="user-service" />
-      </profile>
-      <profile name="Annotation profile for usage-service" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-        </processorPath>
         <module name="usage-service" />
+        <module name="user-service" />
+        <module name="device-service" />
         <module name="ingestion-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="alert-service" target="21" />
       <module name="Home-Energy-Tracker" target="21" />
+      <module name="Insight-Service" target="21" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
