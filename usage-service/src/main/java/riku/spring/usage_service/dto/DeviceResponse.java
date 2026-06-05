@@ -12,4 +12,5 @@ public class DeviceResponse {
     private DeviceType type;
     private String location;
     private Long userId;
+    private double energyConsumed;
 }

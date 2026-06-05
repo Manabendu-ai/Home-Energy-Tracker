@@ -18,6 +18,12 @@ public class DeviceController {
         return service.getDeviceById(id);
     }
 
+    @GetMapping("/getAll/{userId}")
+    public ResponseEntity<?> getAllDeviceByUserId(@PathVariable Long userId){
+        return service.getAllDevicesByUserId(userId);
+    }
+
+
     @GetMapping("/validate/{id}")
     public ResponseEntity<Boolean> validateDeviceById(@PathVariable Long id){
         return ResponseEntity.ok(service.validateDeviceById(id));
