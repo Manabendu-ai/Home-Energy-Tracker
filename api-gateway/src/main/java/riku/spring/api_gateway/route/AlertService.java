@@ -29,7 +29,7 @@ public class AlertService {
     }
 
     @Bean
-    public RouterFunction<ServerResponse> userFallback(){
+    public RouterFunction<ServerResponse> AlertFallback(){
         return route("fallbackroute")
                 .route(RequestPredicates.path("/fallbackroute"),
                         req -> ServerResponse.status(HttpStatus.SERVICE_UNAVAILABLE)

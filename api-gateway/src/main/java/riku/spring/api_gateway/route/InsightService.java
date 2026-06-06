@@ -29,7 +29,7 @@ public class InsightService {
     }
 
     @Bean
-    public RouterFunction<ServerResponse> userFallback(){
+    public RouterFunction<ServerResponse> InsightFallback(){
         return route("fallbackroute")
                 .route(RequestPredicates.path("/fallbackroute"),
                         req -> ServerResponse.status(HttpStatus.SERVICE_UNAVAILABLE)

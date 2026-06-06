@@ -1,4 +1,4 @@
-HELP.md
+api-gateway/HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
@@ -28,6 +28,13 @@ target/
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
+# Docker volumes
+volume-data/
+influxdb_data/
+docker/kafka_data/
+
+# IntelliJ
+.idea/
 
 ### VS Code ###
 .vscode/
