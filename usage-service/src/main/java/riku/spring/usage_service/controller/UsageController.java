@@ -12,6 +12,11 @@ public class UsageController {
 
     private final UsageService usageService;
 
+    @GetMapping("/test")
+    public String test() {
+        return "Usage Service Working";
+    }
+
     @GetMapping("/{userId}")
     public ResponseEntity<?> getUserDeviceUsage(
             @PathVariable Long userId,
