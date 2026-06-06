@@ -29,7 +29,7 @@ public class DeviceService {
     }
 
     @Bean
-    public RouterFunction<ServerResponse> userFallback(){
+    public RouterFunction<ServerResponse> DeviceFallback(){
         return route("fallbackroute")
                 .route(RequestPredicates.path("/fallbackroute"),
                         req -> ServerResponse.status(HttpStatus.SERVICE_UNAVAILABLE)
