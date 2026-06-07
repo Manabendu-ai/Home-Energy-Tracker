@@ -9,7 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="api-gateway" />
       </profile>
-      <profile name="Annotation profile for alert-service" enabled="true">
+      <profile name="Annotation profile for user-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -19,8 +19,8 @@
         <module name="usage-service" />
         <module name="user-service" />
         <module name="Insight-Service" />
-        <module name="alert-service" />
         <module name="device-service" />
+        <module name="alert-service" />
         <module name="ingestion-service" />
       </profile>
     </annotationProcessing>

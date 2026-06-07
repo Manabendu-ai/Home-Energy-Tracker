@@ -16,22 +16,23 @@ import static org.springframework.cloud.gateway.server.mvc.handler.HandlerFuncti
 
 @Configuration
 public class InsightService {
+
     @Bean
-    public RouterFunction<ServerResponse> insightRoute(){
+    public RouterFunction<ServerResponse> insightRoute() {
         return route("insight-service")
                 .route(RequestPredicates.path("/api/insight/**"), http())
                 .before(uri("http://localhost:8086"))
                 .filter(CircuitBreakerFilterFunctions.circuitBreaker(
                         "InsightServiceCircuitBreaker",
-                        URI.create("forward:/fallbackroute")
+                        URI.create("forward:/insightFallback")
                 ))
                 .build();
     }
 
     @Bean
-    public RouterFunction<ServerResponse> InsightFallback(){
-        return route("fallbackroute")
-                .route(RequestPredicates.path("/fallbackroute"),
+    public RouterFunction<ServerResponse> insightFallback() {
+        return route("insightFallback")
+                .route(RequestPredicates.path("/insightFallback"),
                         req -> ServerResponse.status(HttpStatus.SERVICE_UNAVAILABLE)
                                 .body("InsightService is Down"))
                 .build();
